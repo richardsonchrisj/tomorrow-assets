@@ -4,7 +4,7 @@ Generated 3D assets (glTF/GLB) for the **Tomorrow** project — the Genentech DD
 AI Lunch & Learn series web prototype. Served to the web app via jsDelivr:
 
 ```
-https://cdn.jsdelivr.net/gh/richardsonchrisj/tomorrow-assets@main/monorail.glb
+https://cdn.jsdelivr.net/gh/richardsonchrisj/tomorrow-assets@master/monorail.glb
 ```
 
 | Asset | Contents |
