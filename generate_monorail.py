@@ -174,18 +174,20 @@ def build_car(kind):
     # hull with tumblehome
     parts['hull'].append(loft(sts, HULL['a'], HULL['b'], HULL['c'], HULL['n'], tumble=True))
 
-    # windows: discrete panes with rhythm. Mid: 6/side. Nose cars: 4/side aft
-    # of the nose + a wraparound windshield from the banded loft on the nose.
+    # windows: discrete panes with rhythm, laid out AROUND the doors — doors
+    # near the car ends, a clean run of panes between them.
     win_y = 0.42
-    win_ext = [0.60, 0.48, 0.05]
+    win_ext = [0.48, 0.48, 0.05]   # width < spacing, so panes read as panes
     if nose:
-        win_xs = np.linspace(-HALF + 0.72, HALF - NOSE - 0.42, 4)
+        win_xs = np.linspace(-1.15, 0.25, 3)
     else:
-        win_xs = np.linspace(-HALF + 0.72, HALF - 0.72, 6)
+        win_xs = np.linspace(-1.3, 1.3, 5)
     for wx in win_xs:
         parts['glass'] += side_panel(win_ext, wx, win_y)
     if nose:
-        shield = loft(stations_nose(from_x=HALF - NOSE - 0.05), 0.955, 0.30, 0.44, 2.2,
+        # windshield: front two-thirds of the nose only — a raked visor, not
+        # a glass hood over the whole taper
+        shield = loft(stations_nose(from_x=HALF - NOSE + 0.35), 0.95, 0.26, 0.48, 2.2,
                       cap_start=False, cap_end=True)
         parts['glass'].append(shield)
 
@@ -197,25 +199,27 @@ def build_car(kind):
         parts['bib'].append(loft(stations_nose(from_x=HALF - NOSE + 0.12), 0.78, 0.46, -0.88, 2.3,
                                  cap_start=False, cap_end=True))
 
-    # skirt + underframe + bogies
+    # skirt + a dark shadow strip along its base (bogies on a straddle
+    # monorail wrap the beam INSIDE the skirt — nothing may hang below it,
+    # or it clips the guideway at the close pass)
     parts['skirt'].append(loft(sts, 0.72, 0.20, -1.22, 2.2))
-    parts['under'].append(boxed([L * 0.56, 0.26, 1.28], [(-0.25 if nose else 0.0), -1.5, 0]))
-    for bx in ([-HALF + 1.05] if nose else [-HALF + 1.05, HALF - 1.05]):
-        parts['under'].append(boxed([0.95, 0.24, 1.5], [bx, -1.56, 0]))
+    for sz in (0.62, -0.62):
+        parts['under'].append(boxed([L * 0.55, 0.09, 0.12], [(-0.2 if nose else 0.0), -1.36, sz]))
 
-    # doors: recessed-reading panels + center seam
+    # doors: recessed-reading panels + center seam, near the car ends
     door_ext = [0.55, 1.72, 0.03]
     seam_ext = [0.025, 1.72, 0.032]
-    door_xs = [-1.55] if nose else [-1.55, 1.55]
+    door_xs = [-1.95] if nose else [-1.95, 1.95]
     for dx in door_xs:
         parts['door'] += side_panel(door_ext, dx, -0.38, proud=0.008)
         parts['seam'] += side_panel(seam_ext, dx, -0.38, proud=0.010)
 
-    # roof: chrome spine + equipment pods
+    # roof: chrome spine + equipment pods, seated INTO the roof curve so no
+    # corner floats above the shoulder radius
     parts['spine'].append(loft(sts, 0.20, 0.075, 1.02, 2.0))
     pod_xs = [-0.9] if nose else [-0.9, 0.9]
     for px_ in pod_xs:
-        parts['pods'].append(boxed([1.05, 0.15, 0.85], [px_, 1.11, 0]))
+        parts['pods'].append(boxed([1.0, 0.14, 0.68], [px_, 1.045, 0]))
 
     # lamps: white head lenses on the nose face, set into the bib
     if nose:
